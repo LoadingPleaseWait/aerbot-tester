@@ -67,10 +67,18 @@ msg_t vexOperator(void *arg) {
 
   int buttonPressed = 0;
   int currentRamp = 0;
+  double increment = 0;
 
   while (!chThdShouldTerminate()) {
+
+
     //ramping
-    currentRamp += (vexControllerGet(Ch3) - currentRamp) * (vexControllerGet(Btn6D) ? .2 : .42);
+    currentRamp += (vexControllerGet(Ch3) - currentRamp) * (vexControllerGet(Btn6D) ? .2 : increment);
+
+    if(vexControllerGet(Btn7U))
+      increment += .005;
+    else if(vexControllerGet(Btn7D))
+      increment -= .005;
 
     // Btn6U will turn the motors to full speed
     if (vexControllerGet(Btn6U))
@@ -88,7 +96,7 @@ msg_t vexOperator(void *arg) {
     buttonPressed = vexControllerGet(Btn5U);
 
 
-    vexSleep(50);//don't starve other threads
+    vexSleep(20);//don't starve other threads
   }
 
   return (msg_t)0;
