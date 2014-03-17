@@ -72,7 +72,7 @@ msg_t vexOperator(void *arg) {
 
 
     //ramping
-    currentRamp += (vexControllerGet(Ch3) - currentRamp) * (vexControllerGet(Btn6D) ? .7 : .6);
+    currentRamp += (vexControllerGet(Ch3) - currentRamp) * (vexControllerGet(Btn6D) ? .2 : .5);
 
     // Btn6U will turn the motors to full speed
     if (vexControllerGet(Btn6U))
