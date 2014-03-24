@@ -7,7 +7,9 @@
 void setShooter(int s);
 void setIntake(int speed);
 void setPneumatic(int value);
+void setArm(int value);
 int motorOn;
+int intakeUp;
 
 static vexDigiCfg dConfig[kVexDigital_Num] = {
   { kVexDigital_1,    kVexSensorDigitalOutput, kVexConfigOutput,      0 },
@@ -41,6 +43,7 @@ static vexMotorCfg mConfig[kVexMotorNum] = {
 #define shooterRight kVexMotor_2
 #define intakeMotor kVexMotor_4
 #define relay kVexDigital_1
+#define arm kVexDigital_2
 
 void vexUserSetup() {
   vexDigitalConfigure(dConfig, DIG_CONFIG_SIZE(dConfig));
@@ -67,6 +70,7 @@ msg_t vexOperator(void *arg) {
   vexTaskRegister("operator");
 
   int buttonPressed = 0;
+  int armPress = 0;
 
   while (!chThdShouldTerminate()) {
     //toggle shooter motor
@@ -89,6 +93,13 @@ msg_t vexOperator(void *arg) {
     else
       setIntake(vexControllerGet(Ch2));
 
+    //toggle intake pneumatic
+    if(!armPress && vexControllerGet(Btn6U)){
+      setArm(intakeUp ? kVexDigitalLow : kVexDigitalHigh);
+      intakeUp = !intakeUp;
+    }
+    armPress = vexControllerGet(Btn6U);
+
     vexSleep(20);//don't starve other threads
   }
 
@@ -108,4 +119,9 @@ void setIntake(int speed){
 // sets the pneumatic relay to on or off
 void setPneumatic(int value){
   vexDigitalPinSet(relay, value);
+}
+
+// sets the state of the intake arm
+void setArm(int value){
+  vexDigitalPinSet(arm,value);
 }
