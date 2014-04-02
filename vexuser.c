@@ -76,6 +76,7 @@ msg_t vexOperator(void *arg) {
   int buttonPressed = 0;
   int armPress = 0;
   int shotPress = 0;
+  int intakePress = 0;
 
   while (!chThdShouldTerminate()) {
     //toggle shooter motor
@@ -99,6 +100,8 @@ msg_t vexOperator(void *arg) {
       setIntake(127);
     else if(vexControllerGet(Btn8D))
       setIntake(-127);
+    else if(vexControllerGet(Btn6U))
+      setIntake(127);
     else if(abs(vexControllerGet(Ch2)) <= 15)
       setIntake(0);//deadzone
     else
@@ -108,8 +111,15 @@ msg_t vexOperator(void *arg) {
     if(!armPress && vexControllerGet(Btn5U)){
       setArm(intakeUp ? kVexDigitalLow : kVexDigitalHigh);
       intakeUp = !intakeUp;
+    }else if(!intakePress && vexControllerGet(Btn6U)){
+      setArm(kVexDigitalHigh);
+      intakeUp = true;
+    }else if(intakePress && !vexControllerGet(Btn6U)){
+      setArm(kVexDigitalLow);
+      intakeUp = false;
     }
-    armPress = vexControllerGet(Btn6U);
+    armPress = vexControllerGet(Btn5U);
+    intakeUp = vexControllerGet(Btn6U);
 
     vexSleep(20);//don't starve other threads
   }
