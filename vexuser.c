@@ -10,6 +10,10 @@ void setPneumatic(int value);
 void setArm(int value);
 int motorOn;
 int intakeUp;
+<<<<<<< HEAD
+=======
+int shooting;
+>>>>>>> 2d477bc946a26317e5f8b8d8c23dcb64364817c1
 
 static vexDigiCfg dConfig[kVexDigital_Num] = {
   { kVexDigital_1,    kVexSensorDigitalOutput, kVexConfigOutput,      0 },
@@ -71,6 +75,7 @@ msg_t vexOperator(void *arg) {
 
   int buttonPressed = 0;
   int armPress = 0;
+  int shotPress = 0;
 
   while (!chThdShouldTerminate()) {
     //toggle shooter motor
@@ -84,17 +89,23 @@ msg_t vexOperator(void *arg) {
     else if(vexControllerGet(Btn7U))
       setShooter(0);
 
-    // pressing button 6D will result in the pneumatic going up
-    setPneumatic(vexControllerGet(Btn6D) ? kVexDigitalHigh : kVexDigitalLow);
+    // toggle shooter pneumatic
+    if(!shotPress && vexControllerGet(Btn6D))
+      setPneumatic(shooting ?  kVexDigitalLow : kVexDigitalHigh);
+    shotPress = vexControllerGet(Btn6D);
 
-    //intake is controlled with a joystick
-    if(abs(vexControllerGet(Ch2)) <= 15)
+    //intake is controlled with a joystick and the buttons
+    if(vexControllerGet(Btn8L))
+      setIntake(127);
+    else if(vexControllerGet(Btn8D))
+      setIntake(-127);
+    else if(abs(vexControllerGet(Ch2)) <= 15)
       setIntake(0);//deadzone
     else
       setIntake(vexControllerGet(Ch2));
 
     //toggle intake pneumatic
-    if(!armPress && vexControllerGet(Btn6U)){
+    if(!armPress && vexControllerGet(Btn5U)){
       setArm(intakeUp ? kVexDigitalLow : kVexDigitalHigh);
       intakeUp = !intakeUp;
     }
@@ -119,6 +130,12 @@ void setIntake(int speed){
 // sets the pneumatic relay to on or off
 void setPneumatic(int value){
   vexDigitalPinSet(relay, value);
+  shooting = value == kVexDigitalHigh;
+}
+
+// sets the state of the intake arm
+void setArm(int value){
+  vexDigitalPinSet(arm,value);
 }
 
 // sets the state of the intake arm
