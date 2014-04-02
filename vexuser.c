@@ -9,7 +9,7 @@ void setIntake(int speed);
 void setPneumatic(int value);
 void setArm(int value);
 int motorOn;
-int intakeUp;
+int intakeUp = 0;
 int shooting;
 
 static vexDigiCfg dConfig[kVexDigital_Num] = {
@@ -70,21 +70,18 @@ msg_t vexOperator(void *arg) {
   (void)arg;
   vexTaskRegister("operator");
 
-  int buttonPressed = 0;
   int armPress = 0;
   int shotPress = 0;
   int intakePress = 0;
 
   while (!chThdShouldTerminate()) {
-    //toggle shooter motor
-    if(!buttonPressed && vexControllerGet(Btn8U))
-      setShooter(motorOn ? 0 : 127);
-    buttonPressed = vexControllerGet(Btn8U);
 
-    //joystick motor control
-    if(abs(vexControllerGet(Ch3)) > 15)
+    //joystick and button motor control
+    if(vexControllerGet(Btn8U))
+      setShooter(127);
+    else if(abs(vexControllerGet(Ch3)) > 15)
       setShooter(vexControllerGet(Ch3));
-    else if(vexControllerGet(Btn7U))
+    else
       setShooter(0);
 
     // toggle shooter pneumatic
