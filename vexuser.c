@@ -10,10 +10,7 @@ void setPneumatic(int value);
 void setArm(int value);
 int motorOn;
 int intakeUp;
-<<<<<<< HEAD
-=======
 int shooting;
->>>>>>> 2d477bc946a26317e5f8b8d8c23dcb64364817c1
 
 static vexDigiCfg dConfig[kVexDigital_Num] = {
   { kVexDigital_1,    kVexSensorDigitalOutput, kVexConfigOutput,      0 },
@@ -119,7 +116,7 @@ msg_t vexOperator(void *arg) {
       intakeUp = false;
     }
     armPress = vexControllerGet(Btn5U);
-    intakeUp = vexControllerGet(Btn6U);
+    intakePress = vexControllerGet(Btn6U);
 
     vexSleep(20);//don't starve other threads
   }
@@ -141,11 +138,6 @@ void setIntake(int speed){
 void setPneumatic(int value){
   vexDigitalPinSet(relay, value);
   shooting = value == kVexDigitalHigh;
-}
-
-// sets the state of the intake arm
-void setArm(int value){
-  vexDigitalPinSet(arm,value);
 }
 
 // sets the state of the intake arm
