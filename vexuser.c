@@ -91,14 +91,18 @@ msg_t vexOperator(void *arg) {
       setPneumatic(shooting ?  kVexDigitalLow : kVexDigitalHigh);
     shotPress = vexControllerGet(Btn6D);
 
-    //intake is controlled with a joystick
-    if(abs(vexControllerGet(Ch2)) <= 15)
+    //intake is controlled with a joystick and the buttons
+    if(vexControllerGet(Btn8L))
+      setIntake(127);
+    else if(vexControllerGet(Btn8D))
+      setIntake(-127);
+    else if(abs(vexControllerGet(Ch2)) <= 15)
       setIntake(0);//deadzone
     else
       setIntake(vexControllerGet(Ch2));
 
     //toggle intake pneumatic
-    if(!armPress && vexControllerGet(Btn6U)){
+    if(!armPress && vexControllerGet(Btn5U)){
       setArm(intakeUp ? kVexDigitalLow : kVexDigitalHigh);
       intakeUp = !intakeUp;
     }
